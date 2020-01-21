@@ -68,6 +68,11 @@ namespace restapi.Controllers
             return timecard;
         }
 
+        /**
+         *  Transition a timecard to a deleted state. This is a terminal state and cannot be undone.
+         *  This design choice allows for permenant storage of timesheet data, instead of allowing
+         *  a client to erase the timesheets from the database entirely.
+         */
         [HttpDelete("{id:guid}/deletion")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -151,7 +156,10 @@ namespace restapi.Controllers
                 return NotFound();
             }
         }
-
+        /**
+         *  Replaces a timesheet line by deleting the previous timesheet and creating
+         *  a new one, with a new GUID.
+         */
         [HttpPost("{timesheetId:guid}/lines/{lineId:guid}/replace")]
         [Produces(ContentTypes.TimesheetLine)]
         [ProducesResponseType(typeof(TimecardLine), 200)]
@@ -190,6 +198,9 @@ namespace restapi.Controllers
             }
         }
 
+        /**
+         * Updates an existing timesheet line, but maintains the GUID from the original line.
+         */
         [HttpPatch("{timesheetId:guid}/lines/{lineId:guid}/update")]
         [Produces(ContentTypes.TimesheetLine)]
         [ProducesResponseType(typeof(TimecardLine), 200)]
