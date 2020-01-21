@@ -68,10 +68,10 @@ namespace restapi.Controllers
             return timecard;
         }
 
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id:guid}/deletion")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public IActionResult Delete(Guid id)
+        public IActionResult Delete(Guid id, [FromBody] Deletion deletion)
         {
             logger.LogInformation($"Looking for timesheet {id}");
 
@@ -87,9 +87,15 @@ namespace restapi.Controllers
                 return StatusCode(409, new InvalidStateError() { });
             }
 
+            var transition = new Transition(deletion, TimecardStatus.Deleted);
+
+            logger.LogInformation($"Deleting the timesheet {transition}");
+
+            timecard.Transitions.Add(transition);
+
             repository.Delete(id);
 
-            return Ok();
+            return Ok(timecard);
         }
 
         [HttpGet("{id:guid}/lines")]
@@ -139,6 +145,80 @@ namespace restapi.Controllers
                 repository.Update(timecard);
 
                 return Ok(annotatedLine);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost("{timesheetId:guid}/lines/{lineId:guid}/replace")]
+        [Produces(ContentTypes.TimesheetLine)]
+        [ProducesResponseType(typeof(TimecardLine), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(InvalidStateError), 409)]
+        [ProducesResponseType(typeof(LineNotFoundError), 104)]
+        public IActionResult ReplaceLine(Guid timesheetId, Guid lineId, [FromBody] DocumentLine documentLine)
+        {
+            logger.LogInformation($"Looking for timesheet {timesheetId} with line {lineId}");
+
+            Timecard timecard = repository.Find(timesheetId);
+
+            if (timecard != null)
+            {
+                if (timecard.Status != TimecardStatus.Draft)
+                {
+                    return StatusCode(409, new InvalidStateError() { });
+                }
+
+                if (!timecard.HasLine(lineId))
+                {
+                    return StatusCode(409, new LineNotFoundError() { });
+                }
+
+                timecard.deleteLine(lineId);
+
+                var annotatedLine = timecard.AddLine(documentLine);
+
+                repository.Update(timecard);
+
+                return Ok(annotatedLine);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPatch("{timesheetId:guid}/lines/{lineId:guid}/update")]
+        [Produces(ContentTypes.TimesheetLine)]
+        [ProducesResponseType(typeof(TimecardLine), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(InvalidStateError), 409)]
+        [ProducesResponseType(typeof(LineNotFoundError), 104)]
+        public IActionResult UpdateLine(Guid timesheetId, Guid lineId, [FromBody] DocumentLine documentLine)
+        {
+            logger.LogInformation($"Looking for timesheet {timesheetId} with line {lineId}");
+
+            Timecard timecard = repository.Find(timesheetId);
+
+            if (timecard != null)
+            {
+                if (timecard.Status != TimecardStatus.Draft)
+                {
+                    return StatusCode(409, new InvalidStateError() { });
+                }
+
+                if (!timecard.HasLine(lineId))
+                {
+                    return StatusCode(409, new LineNotFoundError() { });
+                }
+
+                var updatedLine = timecard.updateLine(lineId, documentLine);
+
+                repository.Update(timecard);
+
+                return Ok(updatedLine);
             }
             else
             {
@@ -392,6 +472,11 @@ namespace restapi.Controllers
                 if (timecard.Status != TimecardStatus.Submitted)
                 {
                     return StatusCode(409, new InvalidStateError() { });
+                }
+
+                if (timecard.Employee == approval.Person)
+                {
+                    return StatusCode(409, new InvalidSubmitterError() { });
                 }
 
                 var transition = new Transition(approval, TimecardStatus.Approved);

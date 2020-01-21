@@ -28,6 +28,18 @@ namespace restapi.Controllers
                     }
                 },
                 {
+                    ApplicationRelationship.CreateTimesheet, new List<DocumentLink>()
+                    {
+                        new DocumentLink()
+                        {
+                            Method = Method.Post,
+                            Type = ContentTypes.Timesheet,
+                            Relationship = DocumentRelationship.CreateTimesheet,
+                            Reference = "/timesheets"
+                        }
+                    }
+                },
+                {
                     ApplicationRelationship.Version, "0.1"
                 }
             };

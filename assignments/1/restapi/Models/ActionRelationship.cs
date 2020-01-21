@@ -2,6 +2,8 @@ namespace restapi.Models
 {
     public enum ActionRelationship
     {
+        Create,
+
         Submit,
 
         Cancel,
@@ -9,6 +11,8 @@ namespace restapi.Models
         Reject,
 
         Approve,
+
+        Delete,
 
         RecordLine
     }

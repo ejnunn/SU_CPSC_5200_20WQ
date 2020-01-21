@@ -20,7 +20,10 @@ namespace restapi.Models
             Transitions = new List<Transition>();
         }
 
-        public int Employee { get; set; }
+        // private "set" method to verify employee can't be updated once Timecard is created
+        // "readonly" keyword not accepted as valid by Visual Studio
+        // also considering removing "set" method altogether
+        public int Employee { get; private set; }
 
         public TimecardStatus Status
         {
@@ -90,6 +93,14 @@ namespace restapi.Models
                         Reference = $"/timesheets/{UniqueIdentifier}/lines"
                     });
 
+                    links.Add(new ActionLink()
+                    {
+                        Method = Method.Delete,
+                        Type = ContentTypes.Deletion,
+                        Relationship = ActionRelationship.Delete,
+                        Reference = $"/timesheets/{UniqueIdentifier}/deletion"
+                    });
+
                     break;
 
                 case TimecardStatus.Submitted:
@@ -124,7 +135,14 @@ namespace restapi.Models
                     break;
 
                 case TimecardStatus.Cancelled:
-                    // terminal state, nothing possible here
+                    links.Add(new ActionLink()
+                    {
+                        Method = Method.Delete,
+                        Type = ContentTypes.Deletion,
+                        Relationship = ActionRelationship.Delete,
+                        Reference = $"/timesheets/{UniqueIdentifier}/deletion"
+                    });
+
                     break;
             }
 
@@ -168,6 +186,16 @@ namespace restapi.Models
             return links;
         }
 
+        public void deleteLine(Guid lineId)
+        {
+            Lines.Remove(Lines.FirstOrDefault(l => l.UniqueIdentifier == lineId));
+        }
+
+        public TimecardLine updateLine(Guid lineId, DocumentLine documentLine)
+        {
+            return Lines.FirstOrDefault(l => l.UniqueIdentifier == lineId).Update(documentLine);
+        }
+
         public TimecardLine AddLine(DocumentLine documentLine)
         {
             var annotatedLine = new TimecardLine(documentLine);
@@ -187,7 +215,6 @@ namespace restapi.Models
             return Lines
                 .Any(l => l.UniqueIdentifier == lineId);
         }
-
 
         public override string ToString()
         {
