@@ -1,3 +1,5 @@
+using System;
+
 namespace restapi.Models
 {
     public class ContentTypes
@@ -29,5 +31,7 @@ namespace restapi.Models
         public const string Approval = "application/com.my-company.my-product.timesheet-approval+json";
 
         public const string Deletion = "application/com.my-company.my-product.timesheet-deletion+json";
+
+        public const string Returned = "application/com.my-company.my-product.timesheet-returned+json";
     }
 }

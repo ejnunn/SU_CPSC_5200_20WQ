@@ -12,6 +12,8 @@ namespace restapi.Models
 
         Approve,
 
+        Return,
+
         Delete,
 
         RecordLine

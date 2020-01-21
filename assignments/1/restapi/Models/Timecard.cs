@@ -129,6 +129,14 @@ namespace restapi.Models
                         Reference = $"/timesheets/{UniqueIdentifier}/approval"
                     });
 
+                    links.Add(new ActionLink()
+                    {
+                        Method = Method.Post,
+                        Type = ContentTypes.Returned,
+                        Relationship = ActionRelationship.Return,
+                        Reference = $"/timesheets/{UniqueIdentifier}/returned"
+                    });
+
                     break;
 
                 case TimecardStatus.Approved:
