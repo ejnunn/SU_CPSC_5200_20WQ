@@ -485,6 +485,7 @@ namespace restapi.Controllers
                     return StatusCode(409, new InvalidStateError() { });
                 }
 
+                // The timecard person cannot approve their own timecard
                 if (timecard.Employee == approval.Person)
                 {
                     return StatusCode(409, new InvalidSubmitterError() { });

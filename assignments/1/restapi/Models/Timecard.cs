@@ -20,9 +20,10 @@ namespace restapi.Models
             Transitions = new List<Transition>();
         }
 
-        // private "set" method to verify employee can't be updated once Timecard is created
-        // "readonly" keyword not accepted as valid by Visual Studio
-        // also considering removing "set" method altogether
+        /** private "set" method to verify employee can't be updated once Timecard is created.
+         * "readonly" keyword not accepted as valid by Visual Studio.
+         * (I could also remove "set" method altogether since it is never used)
+         */
         public int Employee { get; private set; }
 
         public TimecardStatus Status
