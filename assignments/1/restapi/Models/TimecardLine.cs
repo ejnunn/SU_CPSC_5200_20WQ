@@ -25,12 +25,27 @@ namespace restapi.Models
             UniqueIdentifier = Guid.NewGuid();
         }
 
+        /**
+         * Simple conditional statements added to Week, Year, and Hours to avoid illogical dates.
+         * More strict checks should be added to handle other unexpected client requests.
+         * (e.x. dayOfWeek Enum verification, etc.)
+         */
         public TimecardLine Update(DocumentLine line)
         {
-            Week = line.Week;
-            Year = line.Year;
+            if (line.Week > 0 && line.Week <= 52)
+            {
+                Week = line.Week;
+            }
+            if (line.Year > 0 && line.Year < 10000)
+            {
+                Year = line.Year;
+            }
+            if (line.Hours > 0 && line.Hours <= 24)
+            {
+                Hours = line.Hours;
+            }
+
             Day = line.Day;
-            Hours = line.Hours;
             Project = line.Project;
 
             Updated = DateTime.UtcNow;

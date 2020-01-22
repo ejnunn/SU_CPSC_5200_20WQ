@@ -1,12 +1,10 @@
 ﻿<Properties StartupConfiguration="{1466695C-A053-4635-86D6-E8BD84420CC9}|Default">
   <MonoDevelop.Ide.ItemProperties.restapi PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Models/Events.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Models/Timecard.cs">
     <Files>
-      <File FileName="Controllers/TimesheetsController.cs" Line="215" Column="1" />
-      <File FileName="Models/Timecard.cs" Line="132" Column="47" />
-      <File FileName="Models/ContentTypes.cs" Line="35" Column="97" />
-      <File FileName="Models/ActionRelationship.cs" Line="16" Column="1" />
-      <File FileName="Models/Events.cs" Line="18" Column="33" />
+      <File FileName="Controllers/TimesheetsController.cs" Line="210" Column="109" />
+      <File FileName="Models/TimecardLine.cs" Line="41" Column="34" />
+      <File FileName="Models/Timecard.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -15,7 +13,7 @@
             <Node name="restapi" expanded="True">
               <Node name="Controllers" expanded="True" />
               <Node name="Models" expanded="True">
-                <Node name="Events.cs" selected="True" />
+                <Node name="Timecard.cs" selected="True" />
               </Node>
             </Node>
           </Node>
